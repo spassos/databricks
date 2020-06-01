@@ -24,7 +24,7 @@
 
 # MAGIC %md 
 # MAGIC 
-# MAGIC ### Passo 1: Criar database
+# MAGIC ### Passo 1: Criar e usar database
 
 # COMMAND ----------
 
