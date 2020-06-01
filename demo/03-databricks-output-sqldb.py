@@ -67,8 +67,7 @@
 # MAGIC -- drop table if exists
 # MAGIC DROP TABLE gold_covid
 # MAGIC 
-# MAGIC -- create table for load
-# MAGIC -- azure sql database
+# MAGIC -- create table for load azure sql database
 # MAGIC CREATE TABLE gold_covid
 # MAGIC (
 # MAGIC   uf CHAR(2),
@@ -80,9 +79,6 @@
 # MAGIC   letality VARCHAR(20)
 # MAGIC   
 # MAGIC );
-# MAGIC 
-# MAGIC -- create columstore index for olap queries
-# MAGIC CREATE CLUSTERED COLUMNSTORE INDEX cci_gold_covid ON gold_covid
 # MAGIC 
 # MAGIC -- query data
 # MAGIC SELECT * FROM gold_covid  
