@@ -313,7 +313,7 @@ silver_covid.write.format("delta").mode("overwrite").save("dbfs:/mnt/bs-producti
 
 # COMMAND ----------
 
-#146690
+#152966
 silver_covid.count()
 
 # COMMAND ----------
@@ -334,11 +334,33 @@ silver_covid.count()
 
 # MAGIC %md
 # MAGIC 
-# MAGIC ### Passo 19: Criar Tabela Gold removendo registro de sumarizando (city = null)
+# MAGIC ### Passo 19: Criar tabela Gold
 
 # COMMAND ----------
 
-# MAGIC %sql 
+df_gold_covid = spark.sql("""
+    SELECT sc.state, 
+           sc.city,
+           sc.confirmed,
+           sc.deaths,
+           sc.date,
+           sc.is_last,
+           sc.letality
+    FROM delta.`/mnt/bs-production/delta/silver_covid/` AS sc
+    where city is not null
+""")
+
+df_gold_covid.write.format("delta").mode("overwrite").save("dbfs:/mnt/bs-production/delta/gold_covid/")
+
+# COMMAND ----------
+
+# MAGIC %md
+# MAGIC 
+# MAGIC ### Passo 20: Criar Tabela Gold removendo registro de sumarizando (city = null)
+
+# COMMAND ----------
+
+# MAGIC %sql
 # MAGIC 
 # MAGIC -- remove if exists
 # MAGIC DROP TABLE IF EXISTS gold_covid;
@@ -347,21 +369,20 @@ silver_covid.count()
 # MAGIC CREATE TABLE gold_covid
 # MAGIC USING delta
 # MAGIC AS
-# MAGIC SELECT sc.state, 
-# MAGIC        sc.city,
-# MAGIC        sc.confirmed,
-# MAGIC        sc.deaths,
-# MAGIC        sc.date,
-# MAGIC        sc.is_last,
-# MAGIC        sc.letality
-# MAGIC FROM delta.`/mnt/bs-production/delta/silver_covid/` AS sc
-# MAGIC where city is not null
+# MAGIC SELECT gc.state, 
+# MAGIC        gc.city,
+# MAGIC        gc.confirmed,
+# MAGIC        gc.deaths,
+# MAGIC        gc.date,
+# MAGIC        gc.is_last,
+# MAGIC        gc.letality
+# MAGIC FROM delta.`/mnt/bs-production/delta/gold_covid/` AS gc
 
 # COMMAND ----------
 
 # MAGIC %md
 # MAGIC 
-# MAGIC ### Passo 20: Montando query com os dados tratados (Gold Data)
+# MAGIC ### Passo 21: Montando query com os dados tratados (Gold Data)
 
 # COMMAND ----------
 
@@ -371,5 +392,6 @@ silver_covid.count()
 # MAGIC -- delta table performance without partitioning
 # MAGIC SELECT state, date, sum(confirmed) as confirmados, sum(deaths) as mortes
 # MAGIC FROM gold_covid
+# MAGIC WHERE DATE = '2020-06-01'
 # MAGIC GROUP BY state, date
 # MAGIC ORDER BY state, date asc
