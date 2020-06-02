@@ -313,8 +313,8 @@ silver_covid.write.format("delta").mode("overwrite").save("dbfs:/mnt/bs-producti
 
 # COMMAND ----------
 
-#138643
-silver_user.count()
+#146690
+silver_covid.count()
 
 # COMMAND ----------
 
